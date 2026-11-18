@@ -1,0 +1,1 @@
+raw STM32G431RBT6
