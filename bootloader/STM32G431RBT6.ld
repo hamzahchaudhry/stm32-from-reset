@@ -20,19 +20,32 @@ MEMORY
    * 0x0800 0000 to 0x0801 FFFF.
    */
 
-  flash (rx)  : ORIGIN = 0x08000000, LENGTH = 128K
-  sram  (rwx) : ORIGIN = 0x20000000, LENGTH = 32K
+  /* flash (rx)  : ORIGIN = 0x08000000, LENGTH = 128K */
+  bootrom (rx)  : ORIGIN = 0x08000000, LENGTH = 28K
+  approm  (rx)  : ORIGIN = 0x08007000, LENGTH = 100K
+  sram    (rwx) : ORIGIN = 0x20000000, LENGTH = 32K
 }
+
+__bootrom_start__ = ORIGIN(bootrom);
+__bootrom_size__ = LENGTH(bootrom);
+__approm_start__ = ORIGIN(approm);
+__approm_size__ = LENGTH(approm);
 
 STACK_SIZE = 0x2000; /* 8KB */
 
 SECTIONS
 {
+  .vector :
+  {
+    _svectortable = .;
+    *(.vector*)
+  } > bootrom
+
   .text :
   {
     *(.text*)
     _etext = .;
-  } > flash
+  } > bootrom
 
   .bss :
   {
@@ -46,7 +59,7 @@ SECTIONS
     _sdata = .;
     *(.data*)
     _edata = .;
-  } > sram AT > flash
+  } > sram AT > bootrom
 
   .stack :
   {

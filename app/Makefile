@@ -7,17 +7,17 @@ CFLAGS = -ffreestanding -Og -Wall -Wextra -Wpedantic
 LDSCRIPT = STM32G431RBT6.ld
 LDFLAGS = -nostdlib -T$(LDSCRIPT)
 
-.PHONY: all firmware.elf firmware.bin clean
+.PHONY: all app.elf app.bin clean
 
-all: firmware.elf firmware.bin
+all: app.elf app.bin
 
-firmware.elf: build/firmware.elf
-build/firmware.elf: start.c $(LDSCRIPT) Makefile
+app.elf: build/app.elf
+build/app.elf: app.c start.c $(LDSCRIPT) Makefile
 	mkdir -p $(@D)
-	$(CC) $(MCU) $(CFLAGS) $(LDFLAGS) $< -o $@
+	$(CC) $(MCU) $(CFLAGS) $(LDFLAGS) $(filter %.c,$^) -o $@
 
-firmware.bin: build/firmware.bin
-build/firmware.bin: build/firmware.elf
+app.bin: build/app.bin
+build/app.bin: build/app.elf
 	mkdir -p $(@D)
 	arm-none-eabi-objcopy -O binary $< $@
 
