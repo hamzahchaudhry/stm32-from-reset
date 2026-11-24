@@ -12,6 +12,8 @@
 #define GPIOA_ODR_OFFSET 0x14U
 
 static void start_app(uint32_t pc, uint32_t sp) {
+  (void)pc;
+  (void)sp;
   __asm("\n\
       msr msp, r1\n\
       bx r0\n\

@@ -11,9 +11,15 @@ $(BUILD_DIR)/bootloader-padded.bin: bootloader/build/bootloader.elf
 	mkdir -p $(@D)
 	$(OCPY) -O binary --pad-to=0x08007000 --gap-fill=0xFF $< $@
 
-$(PROJECT).bin: $(BUILD_DIR)/$(PROJECT).bin
+$(PROJECT).bin:
+	$(MAKE) -C bootloader bootloader.elf
+	$(MAKE) -C app app.bin
+	$(MAKE) $(BUILD_DIR)/$(PROJECT).bin
+
 $(BUILD_DIR)/$(PROJECT).bin: $(BUILD_DIR)/bootloader-padded.bin app/build/app.bin
 	cat $^ > $@
 
 clean:
+	$(MAKE) -C bootloader clean
+	$(MAKE) -C app clean
 	rm -rf $(BUILD_DIR)
